@@ -8,9 +8,10 @@
 > 8-bit level, the depth-map solve is measured against the same solve in double
 > across 45 more (0.8 levels), and the anchor surface is confirmed not to move at
 > all — 0.0000 of travel, while the rest of the frame travels 20% of the frame
-> (see [Status](#status)). It has **never been loaded into Resolume or Resolve** —
-> only compiled, rendered and measured offline. Check it in your own rig before
-> trusting it in a show.
+> (see [Status](#status)). It **runs in Resolume Arena** — loaded and confirmed
+> working by the author on 2026-08-17 — but it has never been loaded into Resolve
+> or any other OpenFX host, and no Windows build has been run. Check it in your
+> own rig before trusting it in a show.
 
 The dolly zoom — the shot where one thing holds still and the world moves — as an
 [FFGL](https://github.com/resolume/ffgl) effect for [Resolume](https://resolume.com)
@@ -188,9 +189,13 @@ on the development machine.
 
 **What has never been checked:**
 
-- **It has never been loaded into Resolume, or into Resolve.** Not once. The
-  parameter groups, the dropdowns, real texture sizes and the hosts'
-  premultiplication behaviour are all unconfirmed, and those are exactly what an
+- **It has been loaded into Resolume Arena and works** — the author's own
+  report on 2026-08-17, the day it was released, not a session observation. So
+  the FFGL side is no longer only a claim about a harness: it registers, it
+  instantiates, and it renders in the host it was written for.
+- **It has never been loaded into Resolve**, or any other OpenFX host. The OFX
+  build is still only checked against `ofxprobe`, so real texture sizes and that
+  host's premultiplication behaviour remain unconfirmed — exactly what an
   offline harness cannot tell you about, because it supplies its own textures.
 - **The Windows build has never been run.** It compiles: the v0.1.0 release ships
   a Windows x64 DLL, an OpenFX bundle and an installer, all built in CI. Nobody

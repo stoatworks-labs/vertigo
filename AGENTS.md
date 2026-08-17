@@ -399,11 +399,15 @@ thing that measures anything.
 
 ## 6. What has never been checked
 
-- **It has never been loaded into Resolume, or into Resolve.** Not once.
-  Parameter groups, the dropdowns, the hosts' real texture sizes and their
-  premultiplication behaviour are all unconfirmed, and those are exactly what the
-  offline harness cannot tell you about, because it supplies its own textures.
-  `cmake --install` puts the bundle where Arena looks.
+- **It runs in Resolume Arena.** Loaded and confirmed working by Allan on
+  2026-08-17. That retires the line this section carried for its first day —
+  every other rendered plugin in the fleet shipped before anyone had seen it in
+  a host, and this one has now been seen. `cmake --install` puts the bundle
+  where Arena looks.
+- **It has never been loaded into Resolve**, or any other OpenFX host. The OFX
+  build has only met `ofxprobe`, so that host's real texture sizes and its
+  premultiplication behaviour are still unconfirmed — exactly what the offline
+  harness cannot tell you about, because it supplies its own textures.
 - **The Windows build has never been run.** It compiles — the v0.1.0 release
   ships a Windows x64 DLL, an OpenFX bundle and an NSIS installer, all built in
   CI — but nobody has loaded any of them into a Windows host. A
