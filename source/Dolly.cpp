@@ -34,26 +34,29 @@ double radialBase( double rhoHat )
 	return 1.0 - std::clamp( rhoHat, 0.0, 1.0 );
 }
 
-double disparity( double base, double gamma, double relief, double anchorLevel )
+double disparity( double base, double gamma, double relief )
 {
-	const double field = std::pow( std::clamp( base, 0.0, 1.0 ), gamma );
+	return anchorDisparity( std::pow( std::clamp( base, 0.0, 1.0 ), gamma ), relief );
+}
 
-	// Scaled about the anchor rather than about zero, which is what makes
-	// relief 0 the identity: every surface collapses onto the anchor, and the
-	// anchor is by definition the thing that does not move.
-	const double scaled = anchorLevel + relief * ( field - anchorLevel );
+double anchorDisparity( double anchorLevel, double relief )
+{
+	// Scaled about the middle of the range, not about the anchor. Both put the
+	// anchor at a fixed point -- see the note in Dolly.h for why only this one
+	// leaves the field reachable when relief goes negative.
+	const double scaled = 0.5 + relief * ( std::clamp( anchorLevel, 0.0, 1.0 ) - 0.5 );
 
 	// The clamp is load-bearing, not defensive. m() below divides by
 	// 1 - sigma*delta, and sigma is under 1 by construction, so a disparity
-	// held inside 0..1 makes that denominator unconditionally positive. Relief
-	// past 1 pushes the field outside 0..1 and this is where it lands: as a
-	// near plane and a far plane, which is what a real camera has anyway.
+	// held inside 0..1 makes that denominator unconditionally positive. A
+	// relief past 1 pushes the field outside 0..1 and this is where it lands:
+	// as a near plane and a far plane, which is what a real camera has anyway.
 	return std::clamp( scaled, 0.0, 1.0 );
 }
 
-double magnification( double delta, double sigma, double anchorLevel )
+double magnification( double delta, double sigma, double anchorDelta )
 {
-	return ( 1.0 - sigma * anchorLevel ) / ( 1.0 - sigma * delta );
+	return ( 1.0 - sigma * anchorDelta ) / ( 1.0 - sigma * delta );
 }
 
 double radialAnchorRadius( double anchorLevel, double gamma )

@@ -739,7 +739,8 @@ int main( int argc, char** argv )
 		const double relief   = reliefFromParam( getParameter( "Relief" ) );
 		const double gamma    = gammaFromParam( getParameter( "Falloff" ) );
 		const double overscan = overscanFromParam( getParameter( "Overscan" ) );
-		const double anchorLv = getParameter( "Anchor" );
+		const double anchorLv    = getParameter( "Anchor" );
+		const double anchorDelta = anchorDisparity( anchorLv, relief );
 
 		const std::vector< unsigned char > picture = buildRadialRamp( width, height, aspect );
 		const GLuint sourceTexture                 = makeTexture( width, height, picture.data() );
@@ -793,8 +794,8 @@ int main( int argc, char** argv )
 				continue;
 			}
 
-			const double m       = magnification( disparity( radialBase( rho ), gamma, relief, anchorLv ),
-			                                      sigma, anchorLv );
+			const double m       = magnification( disparity( radialBase( rho ), gamma, relief ),
+			                                      sigma, anchorDelta );
 			const double predRho = rho / ( m * overscan );
 
 			if( predRho > ceiling )
@@ -854,6 +855,7 @@ int main( int argc, char** argv )
 		const double gamma      = gammaFromParam( getParameter( "Falloff" ) );
 		const double relief     = reliefFromParam( getParameter( "Relief" ) );
 		const double anchorLv   = getParameter( "Anchor" );
+		const double anchorDelta = anchorDisparity( anchorLv, relief );
 		const double ringRadius = radialAnchorRadius( anchorLv, gamma );
 
 		//Measured on the radial ramp and NOT on the depth card. The obvious
@@ -925,8 +927,8 @@ int main( int argc, char** argv )
 				//Same gate as --probe: a source radius from beyond the frame
 				//edge is clamped by the fetch, and a clamped reading is the
 				//edge value rather than a measurement.
-				const double m = magnification( disparity( radialBase( rho ), gamma, relief, anchorLv ),
-				                                sigma, anchorLv );
+				const double m = magnification( disparity( radialBase( rho ), gamma, relief ),
+				                                sigma, anchorDelta );
 				if( rho / m > ceiling )
 					continue;
 
@@ -1012,6 +1014,7 @@ int main( int argc, char** argv )
 		const double gamma    = gammaFromParam( getParameter( "Falloff" ) );
 		const double overscan = overscanFromParam( getParameter( "Overscan" ) );
 		const double anchorLv = getParameter( "Anchor" );
+		const double anchorDelta = anchorDisparity( anchorLv, relief );
 
 		const std::vector< unsigned char > picture = buildHorizontalRamp( width, height );
 		const GLuint sourceTexture                 = makeTexture( width, height, picture.data() );
@@ -1056,7 +1059,7 @@ int main( int argc, char** argv )
 			for( int it = 0; it < kDepthIterations; ++it )
 			{
 				const double base = std::clamp( src, 0.0, 1.0 );//luma == x, clamped at the frame
-				const double m    = magnification( disparity( base, gamma, relief, anchorLv ), sigma, anchorLv );
+				const double m    = magnification( disparity( base, gamma, relief ), sigma, anchorDelta );
 				src               = 0.5 + offset / ( m * overscan );
 			}
 

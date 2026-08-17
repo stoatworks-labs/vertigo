@@ -72,7 +72,7 @@ inline constexpr Preset kPresets[] = {
 	{ "Creeping Unease",   { 0.42f, 0.62f, 1.00f, 0.50f, 0.25f, 2.0f } },//slow enough to be felt rather than seen
 	{ "Slam",              { 0.05f, 0.90f, 1.00f, 0.40f, 0.25f, 2.0f } },//as hard as the range goes
 	{ "Mid Anchor",        { 0.30f, 0.75f, 0.50f, 0.50f, 0.25f, 2.0f } },//locks a ring, not the axis: middle ground holds
-	{ "Deep Field",        { 0.35f, 0.75f, 1.00f, 0.18f, 0.35f, 2.0f } },//gamma pushes the depth out: most of the frame is far
+	{ "Deep Field",        { 0.35f, 0.75f, 1.00f, 0.82f, 0.35f, 2.0f } },//gamma pushes the depth out: most of the frame is far
 };
 
 inline constexpr int kCount = int( sizeof( kPresets ) / sizeof( kPresets[ 0 ] ) );

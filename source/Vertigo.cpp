@@ -226,9 +226,12 @@ FFResult Vertigo::ProcessOpenGL( ProcessOpenGLStruct* pGL )
 	const float aspect = static_cast< float >( picture.Width ) / static_cast< float >( picture.Height );
 	shader.Set( "Aspect", aspect );
 
+	const double relief = reliefFromParam( params[ PT_RELIEF ] );
 	shader.Set( "Sigma", static_cast< float >( sigmaFromParam( params[ PT_DOLLY ] ) ) );
-	shader.Set( "Relief", static_cast< float >( reliefFromParam( params[ PT_RELIEF ] ) ) );
-	shader.Set( "AnchorLevel", params[ PT_ANCHOR ] );
+	shader.Set( "Relief", static_cast< float >( relief ) );
+	//The anchor goes to the GPU already through the relief map, so the shader
+	//never has to know that the two are the same function.
+	shader.Set( "AnchorDelta", static_cast< float >( anchorDisparity( params[ PT_ANCHOR ], relief ) ) );
 
 	shader.Set( "DepthMode", params[ PT_DEPTH ] );
 	shader.Set( "Gamma", static_cast< float >( gammaFromParam( params[ PT_FALLOFF ] ) ) );

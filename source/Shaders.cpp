@@ -30,7 +30,7 @@ uniform vec2 HalfTexel;    //half an input texel, in picture space
 uniform vec2 Centre;       //offset of the optical axis from the middle of frame
 uniform float Aspect;      //picture width / height
 uniform float Sigma;       //the dolly, t/z_anchor; always below 1
-uniform float AnchorLevel; //the disparity that is held fixed
+uniform float AnchorDelta; //where the anchor level landed after Relief
 uniform float Relief;      //signed gain on the depth field; 0 is flat
 uniform float Gamma;       //redistributes the raw field
 uniform float DepthMode;   //0 radial, 1 luma, 2 alpha
@@ -74,14 +74,20 @@ float radialBase( float rho )
 	return 1.0 - clamp( rho, 0.0, 1.0 );
 }
 
+/// Scaled about the middle of the range, not about the anchor -- the anchor is
+/// held by putting it through this same map (see AnchorDelta, set on the C++
+/// side by anchorDisparity()). Scaling about the anchor instead would slide the
+/// whole field off the end of the range whenever Relief went negative and the
+/// anchor was not at 0.5, which reads as the control doing nothing.
+float reliefScaled( float level )
+{
+	//The clamp is what keeps magnification() free of poles.
+	return clamp( 0.5 + Relief * ( clamp( level, 0.0, 1.0 ) - 0.5 ), 0.0, 1.0 );
+}
+
 float disparity( float base )
 {
-	float field = pow( clamp( base, 0.0, 1.0 ), Gamma );
-
-	//Scaled about the anchor, which is what makes Relief = 0 the identity: the
-	//whole scene collapses onto the one surface that by definition does not
-	//move. The clamp is what keeps the magnification below free of poles.
-	return clamp( AnchorLevel + Relief * ( field - AnchorLevel ), 0.0, 1.0 );
+	return reliefScaled( pow( clamp( base, 0.0, 1.0 ), Gamma ) );
 }
 
 float magnification( float delta )
@@ -90,7 +96,7 @@ float magnification( float delta )
 	//unconditionally positive. There is nothing to guard here and nothing that
 	//can produce a NaN, which is why this effect has no equivalent of the
 	//"no source for this pixel" case a lens warp needs.
-	return ( 1.0 - Sigma * AnchorLevel ) / ( 1.0 - Sigma * delta );
+	return ( 1.0 - Sigma * AnchorDelta ) / ( 1.0 - Sigma * delta );
 }
 
 //---------------------------------------------------------------------------

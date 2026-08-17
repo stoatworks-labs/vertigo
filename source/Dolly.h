@@ -97,15 +97,35 @@ double radialBase( double rhoHat );
 
 /// The raw field turned into the disparity that is actually used.
 ///
-/// `base` is 0..1 from radialBase() or from the picture; `gamma` redistributes
-/// it; `relief` scales it about the anchor level, so relief 0 collapses the
-/// field to a constant and relief below 0 turns the scene inside out. The
-/// clamp to 0..1 is what keeps m() free of poles, and it means physically that
-/// nothing is nearer than the near plane and nothing is beyond infinity.
-double disparity( double base, double gamma, double relief, double anchorLevel );
+/// `base` is 0..1 from radialBase() or from the picture, `gamma` redistributes
+/// it, and `relief` is a signed gain **about the middle of the range** -- so 0
+/// collapses the field to a constant and -1 turns the scene inside out without
+/// moving it. The clamp to 0..1 keeps m() free of poles, and means physically
+/// that nothing is nearer than the near plane or beyond infinity.
+///
+/// Scaling about the middle rather than about the anchor is not a detail. The
+/// obvious arrangement -- `anchor + relief*(field - anchor)`, which holds the
+/// anchor fixed by construction -- has the whole field slide off the end of the
+/// range as soon as relief goes negative and the anchor is not at 0.5. With the
+/// anchor at the near end, an inverted field lands entirely past the near plane
+/// and clamps to a constant, and a constant field is the identity: the control
+/// silently does nothing over half its travel. Scaling about the middle keeps
+/// the full range reachable at every anchor, and the anchor still holds,
+/// because anchorDisparity() puts it through the same map.
+double disparity( double base, double gamma, double relief );
 
-/// The magnification a surface at disparity `delta` gets. 1 at the anchor.
-double magnification( double delta, double sigma, double anchorLevel );
+/// Where the anchor level itself lands, once the same relief has been applied
+/// to it. This is what makes the anchor hold: the surface whose field value is
+/// `anchorLevel` gets exactly this disparity, so m() reads 1 there whatever
+/// relief and dolly are doing.
+///
+/// `anchorLevel` is a value of the field *after* gamma -- the depth-map level
+/// to lock onto -- so there is no gamma argument here.
+double anchorDisparity( double anchorLevel, double relief );
+
+/// The magnification a surface at disparity `delta` gets, given the disparity
+/// the anchor landed on. 1 at the anchor, by construction.
+double magnification( double delta, double sigma, double anchorDelta );
 
 /// The radius, in units of the reference radius, that the Radial field puts at
 /// disparity `anchorLevel` -- i.e. the ring that will not move, whatever the

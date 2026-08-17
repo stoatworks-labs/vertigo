@@ -77,7 +77,14 @@ printf '   %d passed, %d failed\n' "$probe_pass" "$probe_fail"
 step "anchor: one surface does not move, while the rest of the frame does"
 anchor_pass=0; anchor_fail=0; anchor_skip=0
 for anchor in 0.20 0.40 0.60 0.80; do
-	for relief in 0.65 0.75 0.90; do
+	# 0.25 and 0.35 are the INVERTED half of the relief control, and they are in
+	# this list because that is where the model was wrong once. Scaling the
+	# field about the anchor rather than about the middle of the range sends the
+	# whole field off the end as soon as relief goes negative and the anchor is
+	# not centred -- the field clamps flat, and a flat field is the identity, so
+	# the effect silently stops. The probe could not see it: the GPU and the C++
+	# agreed perfectly, on the same wrong answer.
+	for relief in 0.25 0.35 0.65 0.75 0.90; do
 		for falloff in 0.40 0.50 0.60; do
 			"$BUILD/vgtest" --anchor \
 				--set "Anchor=$anchor" --set "Relief=$relief" --set "Falloff=$falloff" >/dev/null 2>&1

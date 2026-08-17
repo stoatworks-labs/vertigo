@@ -66,7 +66,10 @@ struct DollySettings
 {
 	double sigma       = 0.0;
 	double relief      = 0.0;
-	double anchorLevel = 1.0;
+	/// The anchor level after the same relief map the field gets -- see
+	/// vertigo::anchorDisparity(). Precomputed per render rather than per
+	/// sample; it does not vary across the frame.
+	double anchorDelta = 0.5;
 	double gamma       = 1.0;
 	vertigo::DepthSource depth = vertigo::DepthSource::Radial;
 	double smooth      = 0.0;
@@ -247,8 +250,8 @@ private:
 	double magnificationAt( double base ) const
 	{
 		return vertigo::magnification(
-			vertigo::disparity( base, dolly.gamma, dolly.relief, dolly.anchorLevel ),
-			dolly.sigma, dolly.anchorLevel );
+			vertigo::disparity( base, dolly.gamma, dolly.relief ),
+			dolly.sigma, dolly.anchorDelta );
 	}
 
 	/// The raw field, read out of the picture. Deliberately NOT routed through
@@ -552,7 +555,7 @@ private:
 		DollySettings s;
 		s.sigma       = vertigo::sigmaFromParam( float( dolly->getValueAtTime( t ) ) );
 		s.relief      = vertigo::reliefFromParam( float( relief->getValueAtTime( t ) ) );
-		s.anchorLevel = anchor->getValueAtTime( t );
+		s.anchorDelta = vertigo::anchorDisparity( anchor->getValueAtTime( t ), s.relief );
 		s.gamma       = vertigo::gammaFromParam( float( falloff->getValueAtTime( t ) ) );
 		s.smooth      = vertigo::smoothFromParam( float( smooth->getValueAtTime( t ) ) );
 
