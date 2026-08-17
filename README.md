@@ -28,9 +28,9 @@ Resolve, Nuke, Natron and Vegas.
 
 | Build | Download | Size |
 | --- | --- | --- |
-| Universal (Apple Silicon + Intel) · .dmg disk image | [`vertigo-0.1.0-macos-universal.dmg`](https://github.com/stoatworks-labs/vertigo/releases/download/v0.1.0/vertigo-0.1.0-macos-universal.dmg) | 179 KB |
-| Universal (Apple Silicon + Intel) · .zip archive | [`vertigo-macos-universal.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-macos-universal.zip) | 139 KB |
-| Universal (Apple Silicon + Intel) · .zip archive (OpenFX — Resolve, Vegas, Nuke) | [`vertigo-ofx-macos-universal.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-ofx-macos-universal.zip) | 217 KB |
+| Universal (Apple Silicon + Intel) · .dmg disk image | [`vertigo-0.1.0-macos-universal.dmg`](https://github.com/stoatworks-labs/vertigo/releases/download/v0.1.0/vertigo-0.1.0-macos-universal.dmg) | 200 KB |
+| Universal (Apple Silicon + Intel) · .zip archive | [`vertigo-macos-universal.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-macos-universal.zip) | 155 KB |
+| Universal (Apple Silicon + Intel) · .zip archive (OpenFX — Resolve, Vegas, Nuke) | [`vertigo-ofx-macos-universal.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-ofx-macos-universal.zip) | 230 KB |
 
 </details>
 
@@ -143,6 +143,16 @@ explains itself, which is why the default is a pull back.
 **There are two nulls, and both are exact.** Dolly at the middle is no move.
 Relief at the middle is a scene with no depth. Either one gives back the original
 picture byte for byte (at Quality = Fast; supersampling still resamples).
+
+## Watch it
+
+[**Vertigo — the dolly zoom as a Resolume plugin**](https://www.youtube.com/watch?v=cWMUqKOl4fU) (48s)
+
+Rendered rather than screen-recorded: an FFGL plugin has no window, so the
+footage is real frames through the real plugin class from `vgtest --pipe`,
+driven by a cue sheet that lives beside the code. Two of its beats are
+checkable rather than atmospheric — the anchor ring holding on the test card,
+and the null, where the dolly runs at full travel and the picture does not move.
 
 ## Try it in a browser
 
