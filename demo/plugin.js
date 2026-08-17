@@ -396,12 +396,10 @@ mountDemo({
   tagline:
     'The dolly zoom: the camera tracks along its own axis while the focal length changes to hold one surface exactly the size it already was. That surface does not move and everything at any other distance does, which is why it reads as the ground giving way rather than as a zoom.',
   repo: 'https://github.com/stoatworks-labs/vertigo',
-  // The kit renders "Project page and downloads" unconditionally — unlike
-  // `video`, which it guards — so leaving this out puts href="undefined" in the
-  // header. There is no project page yet, and the releases are in fact where the
-  // downloads are, so this points there until the website entry exists. The
-  // kit's own missing-link handling is the better fix; see demo/README.md.
-  page: 'https://github.com/stoatworks-labs/vertigo/releases',
+  // No `page`: there is no project page on the website yet, and the kit leaves a
+  // missing link out rather than rendering one that 404s. Same reasoning as the
+  // empty `guide` and `page` in source/StoatworksAbout.h. Add it here when the
+  // website entry exists.
 
   showBackdrop: true,
 
