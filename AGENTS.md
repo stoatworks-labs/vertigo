@@ -404,9 +404,11 @@ thing that measures anything.
   premultiplication behaviour are all unconfirmed, and those are exactly what the
   offline harness cannot tell you about, because it supplies its own textures.
   `cmake --install` puts the bundle where Arena looks.
-- **The Windows build has never been run**, or compiled — only the workflow that
-  would do it exists. A `workflow_dispatch` run of `release.yml` builds both
-  platforms and publishes nothing, which is the cheap way to find out.
+- **The Windows build has never been run.** It compiles — the v0.1.0 release
+  ships a Windows x64 DLL, an OpenFX bundle and an NSIS installer, all built in
+  CI — but nobody has loaded any of them into a Windows host. A
+  `workflow_dispatch` run of `release.yml` builds both platforms and publishes
+  nothing, which is the cheap way to check the build without cutting anything.
 - **Nothing has been timed at all.** Best quality is 16 samples per pixel, and in
   the Luma and Alpha modes each of those runs the depth solve three times, each
   of which is a 5-tap when Smooth is up. Nobody has measured what that costs at

@@ -17,6 +17,40 @@ The dolly zoom — the shot where one thing holds still and the world moves — 
 Arena and Avenue, and an [OpenFX](https://openeffects.org) effect for DaVinci
 Resolve, Nuke, Natron and Vegas.
 
+<!-- downloads:start -->
+
+## Download
+
+**[v0.1.0](https://github.com/stoatworks-labs/vertigo/releases/tag/v0.1.0)** — prebuilt for macOS and Windows. Pick your platform:
+
+<details>
+<summary><b>macOS</b> — Universal (Apple Silicon + Intel)</summary>
+
+| Build | Download | Size |
+| --- | --- | --- |
+| Universal (Apple Silicon + Intel) · .dmg disk image | [`vertigo-0.1.0-macos-universal.dmg`](https://github.com/stoatworks-labs/vertigo/releases/download/v0.1.0/vertigo-0.1.0-macos-universal.dmg) | 179 KB |
+| Universal (Apple Silicon + Intel) · .zip archive | [`vertigo-macos-universal.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-macos-universal.zip) | 139 KB |
+| Universal (Apple Silicon + Intel) · .zip archive (OpenFX — Resolve, Vegas, Nuke) | [`vertigo-ofx-macos-universal.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-ofx-macos-universal.zip) | 217 KB |
+
+</details>
+
+<details>
+<summary><b>Windows</b> — x64</summary>
+
+| Build | Download | Size |
+| --- | --- | --- |
+| x64 · .exe installer | [`vertigo-0.1.0-windows-x86_64-setup.exe`](https://github.com/stoatworks-labs/vertigo/releases/download/v0.1.0/vertigo-0.1.0-windows-x86_64-setup.exe) | 209 KB |
+| x64 · .zip archive | [`vertigo-windows-x86_64.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-windows-x86_64.zip) | 100 KB |
+| x64 · .zip archive (OpenFX — Resolve, Vegas, Nuke) | [`vertigo-ofx-windows-x86_64.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-ofx-windows-x86_64.zip) | 62 KB |
+
+</details>
+
+All builds, checksums and release notes: [github.com/stoatworks-labs/vertigo/releases](https://github.com/stoatworks-labs/vertigo/releases).
+
+The Windows builds are unsigned, so SmartScreen warns once.
+
+<!-- downloads:end -->
+
 ## What it does
 
 A dolly zoom is one camera move and one lens move arranged to cancel. The camera
@@ -148,8 +182,9 @@ on the development machine.
   parameter groups, the dropdowns, real texture sizes and the hosts'
   premultiplication behaviour are all unconfirmed, and those are exactly what an
   offline harness cannot tell you about, because it supplies its own textures.
-- **The Windows build has never been run**, or compiled — only the workflow that
-  would do it exists.
+- **The Windows build has never been run.** It compiles: the v0.1.0 release ships
+  a Windows x64 DLL, an OpenFX bundle and an installer, all built in CI. Nobody
+  has loaded any of them into a Windows host.
 - **Nothing has been timed.** Best quality is 16 samples per pixel and each one
   runs the depth solve three times in the Luma and Alpha modes; nobody has
   measured what that costs at 4K.
