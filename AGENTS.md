@@ -345,12 +345,11 @@ Two things worth running there, both of which have found real bugs:
 
 ## 5b. The browser demo
 
-`demo/` is a static page intended for **vertigo-demo.stoatworks-labs.com**: this
+`demo/` is a static page **live at vertigo-demo.stoatworks-labs.com**: this
 plugin's own GLSL, ported to WebGL2, running on clips generated in the page with
 the parameters the constructor declares. Deployed as a Cloudflare Worker serving
 `demo/` as static assets (`wrangler.toml`), with **no build step** — what is
-committed is what is served. **It has not been deployed**; the custom domain has
-never existed, so the first deploy is also what creates it.
+committed is what is served.
 
 Four things about it are not visible from the files:
 
@@ -363,18 +362,15 @@ Four things about it are not visible from the files:
   evidence about a shader that no longer exists.
 - **`demo/vendor/` is vendored, not authored here.** The master is
   `stoatworks-backend/resolume-demo/kit/`; fix it there and re-run its `sync.sh`.
-  Two caveats as of 2026-08-17: `sync.sh` does not list `vertigo` in its
-  `repos=()`, and its `projects` path resolves to the parent of the backend repo,
-  which after the `~/Projects` reorganisation is no longer where the plugin repos
-  live — so a sync run currently skips everything. The files here were copied by
-  hand and verified byte-identical to porthole's.
-- **The kit renders "Project page and downloads" unconditionally**, unlike
-  `video`, which it guards with an `if`. Omitting `page` therefore puts a literal
-  `href="undefined"` in the header. This is the first plugin with no project
-  page, so it is the first to hit it; the link points at the repository's
-  releases until the website entry exists. The better fix is a one-line guard in
-  the kit master, deliberately not made from here because the backend checkout
-  was on another session's branch.
+  Both were fixed on 2026-08-17 (backend `798c8c0`): `sync.sh` now lists
+  `vertigo`, and it locates each repo under the projects root rather than
+  assuming every project is a sibling of the backend — the old assumption broke
+  in the `~/Projects` reorganisation and made every repo silently "skip".
+- **The kit used to render "Project page and downloads" unconditionally**,
+  unlike `video`, which it guards. Omitting `page` therefore put a literal
+  `href="undefined"` in the header, and this was the first plugin with no project
+  page and so the first to hit it. Guarded at the master on 2026-08-17 and
+  re-vendored across all twelve demos.
 - **Verify a deploy by content, never by status code.** A wrong page still
   answers 200.
 

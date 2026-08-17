@@ -113,9 +113,8 @@ picture byte for byte (at Quality = Fast; supersampling still resamples).
 ## Try it in a browser
 
 `demo/` is the plugin's own shader ported to WebGL2, running on clips generated
-in the page with the parameters the constructor declares — intended for
-**vertigo-demo.stoatworks-labs.com**, not deployed yet. Run it locally with no
-build step:
+in the page with the parameters the constructor declares, live at
+**https://vertigo-demo.stoatworks-labs.com**. Run it locally with no build step:
 
 ```bash
 python3 -m http.server 8792 --directory demo

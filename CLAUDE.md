@@ -40,8 +40,8 @@ Read `AGENTS.md` before changing the dolly maths.
 - Install for Resolve: copy the bundle into `/Library/OFX/Plugins`.
 
 ## Browser demo (demo/)
-- Intended for `vertigo-demo.stoatworks-labs.com`. **Not deployed** — the custom
-  domain has never existed, so the first `cf-run npx wrangler deploy` creates it.
+- **Live at https://vertigo-demo.stoatworks-labs.com.** Deploy with
+  `cf-run npx wrangler deploy`; verify by CONTENT, never by status code.
 - No build step. Serve locally with
   `python3 -m http.server 8792 --directory demo`.
 - `demo/plugin.js` carries a **second copy of the GLSL**, because the page cannot
@@ -49,8 +49,8 @@ Read `AGENTS.md` before changing the dolly maths.
   `python3 demo/tools/check_shaders.py` compares it to `source/Shaders.cpp`
   character for character, and `tools/verify.sh` runs it.
 - `demo/vendor/` is the shared kit from
-  `stoatworks-backend/resolume-demo/`. **Do not edit.** It was copied by hand and
-  is byte-identical to porthole's; `sync.sh` does not list this repo yet.
+  `stoatworks-backend/resolume-demo/`. **Do not edit** — fix the master and
+  re-run its `sync.sh`, which lists this repo.
 - Two presets exist to make a claim checkable by a visitor rather than only by
   the harness: **Null: no depth** and **Null: no move**. Both set Quality to Fast,
   because the supersample grid still resamples when the geometry is the identity.

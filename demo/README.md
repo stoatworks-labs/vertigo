@@ -1,8 +1,6 @@
 # demo/ — the browser demo
 
-Intended for **https://vertigo-demo.stoatworks-labs.com** — not deployed yet, and
-the project page it should link from does not exist either. See the note at the
-bottom.
+Live at **https://vertigo-demo.stoatworks-labs.com**.
 
 **This is not the plugin.** It is the GLSL from [`source/Shaders.cpp`](../source/Shaders.cpp),
 copied across unedited and run in WebGL2 over clips generated in the page, with
@@ -31,8 +29,12 @@ resampled and very slightly softened even though nothing moved.
   of the fleet, that is *enforced* here: `tools/check_shaders.py` compares them
   character for character and `tools/verify.sh` runs it.
 - `vendor/` — the shared kit, vendored from `stoatworks-backend/resolume-demo/`.
-  **Do not edit these.** Fix the master and re-run its `sync.sh`; `sync.sh
-  --check` reports drift.
+  **Do not edit these.** Fix the master and re-run its `sync.sh`, which lists
+  this repo; `sync.sh --check` reports drift.
+- There is deliberately no `page` in `plugin.js` until the website project page
+  exists — the kit leaves a missing link out rather than rendering one that
+  404s, the same reasoning as the empty `guide` and `page` in
+  `source/StoatworksAbout.h`.
 
 ## Deploying
 
@@ -49,17 +51,5 @@ Then verify by content rather than by status code — a wrong page still answers
 curl -s 'https://vertigo-demo.stoatworks-labs.com/?cb=1' | grep -o '<title>[^<]*'
 ```
 
-## Before the first deploy
-
-Three things are outstanding and none of them is code:
-
-1. **The DNS record and the custom domain** for `vertigo-demo` have never
-   existed. `wrangler.toml` claims the hostname, which means the first deploy
-   is also the thing that creates it.
-2. **`sync.sh` in `stoatworks-backend/resolume-demo` does not list this repo**,
-   so a fleet-wide kit sync would skip it. The vendored files here were copied
-   by hand and are byte-identical to porthole's, which sync.sh does maintain.
-3. **The page links to the repository and not to a project page**, because there
-   is no project page and no user guide yet. Same reasoning as the empty `guide`
-   and `page` in `source/StoatworksAbout.h`: a link that 404s is worse than no
-   link. Add both when the website entry exists.
+`.assetsignore` keeps `README.md` and `tools/` off the public URL; both 404 in
+production, which is worth re-checking after any change to what lives in here.
