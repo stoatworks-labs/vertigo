@@ -133,6 +133,25 @@ printf '   %d passed, %d failed\n' "$depth_pass" "$depth_fail"
 # ---------------------------------------------------------------------------
 # A dead control is invisible to the compiler.
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# The demo's copy of the shader.
+#
+# demo/plugin.js cannot include a C++ file, so the browser demo carries a second
+# copy of the GLSL and nothing about the build says a word when they diverge.
+# That matters more for this plugin than for most: the demo carries two presets
+# that invite a visitor to check the claim that one surface does not move, and a
+# demo running a stale shader is evidence about a shader that no longer exists.
+# ---------------------------------------------------------------------------
+if [ -f demo/tools/check_shaders.py ]; then
+	step "the demo runs the plugin's shader"
+	if python3 demo/tools/check_shaders.py; then
+		:
+	else
+		printf '\033[31mFAILED: demo/plugin.js has drifted from source/Shaders.cpp\033[0m\n'
+		failures=$((failures + 1))
+	fi
+fi
+
 step "sweep: no control silently dead"
 if python3 tools/sweep.py > "${TMPDIR:-/tmp}/vertigo-sweep.txt" 2>&1; then
 	echo "   all parameters affect the output"

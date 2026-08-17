@@ -110,6 +110,26 @@ explains itself, which is why the default is a pull back.
 Relief at the middle is a scene with no depth. Either one gives back the original
 picture byte for byte (at Quality = Fast; supersampling still resamples).
 
+## Try it in a browser
+
+`demo/` is the plugin's own shader ported to WebGL2, running on clips generated
+in the page with the parameters the constructor declares — intended for
+**vertigo-demo.stoatworks-labs.com**, not deployed yet. Run it locally with no
+build step:
+
+```bash
+python3 -m http.server 8792 --directory demo
+```
+
+Two of its presets exist to make a claim checkable rather than to look like
+anything: **Null: no depth** drives the dolly as hard as the range goes with
+Relief flat, and **Null: no move** does the opposite. Both give the picture back
+untouched, because a scene with no depth cannot be dolly-zoomed and no camera
+move is no camera move.
+
+It is a port and not the plugin — it says so on the page, and nothing on it
+measures anything.
+
 ## Status
 
 Everything below is measured by `tools/verify.sh`, which runs in about 20 seconds

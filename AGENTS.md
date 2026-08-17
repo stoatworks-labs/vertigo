@@ -343,6 +343,64 @@ Two things worth running there, both of which have found real bugs:
   the same values set by hand must be byte-identical — and no preset should come
   back matching the null.
 
+## 5b. The browser demo
+
+`demo/` is a static page intended for **vertigo-demo.stoatworks-labs.com**: this
+plugin's own GLSL, ported to WebGL2, running on clips generated in the page with
+the parameters the constructor declares. Deployed as a Cloudflare Worker serving
+`demo/` as static assets (`wrangler.toml`), with **no build step** — what is
+committed is what is served. **It has not been deployed**; the custom domain has
+never existed, so the first deploy is also what creates it.
+
+Four things about it are not visible from the files:
+
+- **`demo/plugin.js` carries a second copy of the shader**, because the page
+  cannot include a C++ file. Unlike the rest of the fleet, *that is enforced
+  here*: `demo/tools/check_shaders.py` compares the two character for character
+  and `tools/verify.sh` runs it. It is worth the extra check on this plugin in
+  particular, because the page carries two presets inviting a visitor to confirm
+  that the effect correctly does nothing — and a stale shader would make that
+  evidence about a shader that no longer exists.
+- **`demo/vendor/` is vendored, not authored here.** The master is
+  `stoatworks-backend/resolume-demo/kit/`; fix it there and re-run its `sync.sh`.
+  Two caveats as of 2026-08-17: `sync.sh` does not list `vertigo` in its
+  `repos=()`, and its `projects` path resolves to the parent of the backend repo,
+  which after the `~/Projects` reorganisation is no longer where the plugin repos
+  live — so a sync run currently skips everything. The files here were copied by
+  hand and verified byte-identical to porthole's.
+- **The kit renders "Project page and downloads" unconditionally**, unlike
+  `video`, which it guards with an `if`. Omitting `page` therefore puts a literal
+  `href="undefined"` in the header. This is the first plugin with no project
+  page, so it is the first to hit it; the link points at the repository's
+  releases until the website entry exists. The better fix is a one-line guard in
+  the kit master, deliberately not made from here because the backend checkout
+  was on another session's branch.
+- **Verify a deploy by content, never by status code.** A wrong page still
+  answers 200.
+
+```bash
+cf-run npx wrangler deploy
+curl -s 'https://vertigo-demo.stoatworks-labs.com/?cb=1' | grep -o '<title>[^<]*'
+```
+
+Two traps when driving it in the Browser pane, both of which produce a confident
+wrong answer rather than an error:
+
+- **A hidden pane never fires `requestAnimationFrame`**, so the demo does not
+  render at all and the canvas sits at its default size. Take a screenshot first
+  to make the pane visible.
+- **The context is `preserveDrawingBuffer: false`**, so `gl.readPixels` called
+  from outside the render callback returns a buffer of zeros. Comparing two of
+  those reports zero differing bytes, which reads exactly like a null being
+  proven exact. It is not a measurement. The byte-exact null proofs come from
+  `ofxprobe` against the OpenFX build, and the numbers in this file come from
+  `vgtest`.
+
+The page is emphatic that it is not the plugin and lists what it does not
+reproduce in a disclosure at the foot. Keep that: it is a port, so nothing on it
+is evidence about the plugin, and the offline harness here is still the only
+thing that measures anything.
+
 ## 6. What has never been checked
 
 - **It has never been loaded into Resolume, or into Resolve.** Not once.
