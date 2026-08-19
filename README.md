@@ -22,14 +22,14 @@ Resolve, Nuke, Natron and Vegas.
 
 ## Download
 
-**[v0.1.0](https://github.com/stoatworks-labs/vertigo/releases/tag/v0.1.0)** — prebuilt for macOS and Windows. Pick your platform:
+**[v0.1.1](https://github.com/stoatworks-labs/vertigo/releases/tag/v0.1.1)** — prebuilt for macOS and Windows. Pick your platform:
 
 <details>
 <summary><b>macOS</b> — Universal (Apple Silicon + Intel)</summary>
 
 | Build | Download | Size |
 | --- | --- | --- |
-| Universal (Apple Silicon + Intel) · .dmg disk image | [`vertigo-0.1.0-macos-universal.dmg`](https://github.com/stoatworks-labs/vertigo/releases/download/v0.1.0/vertigo-0.1.0-macos-universal.dmg) | 200 KB |
+| Universal (Apple Silicon + Intel) · .dmg disk image | [`vertigo-0.1.1-macos-universal.dmg`](https://github.com/stoatworks-labs/vertigo/releases/download/v0.1.1/vertigo-0.1.1-macos-universal.dmg) | 201 KB |
 | Universal (Apple Silicon + Intel) · .zip archive | [`vertigo-macos-universal.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-macos-universal.zip) | 155 KB |
 | Universal (Apple Silicon + Intel) · .zip archive (OpenFX — Resolve, Vegas, Nuke) | [`vertigo-ofx-macos-universal.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-ofx-macos-universal.zip) | 230 KB |
 
@@ -40,7 +40,7 @@ Resolve, Nuke, Natron and Vegas.
 
 | Build | Download | Size |
 | --- | --- | --- |
-| x64 · .exe installer | [`vertigo-0.1.0-windows-x86_64-setup.exe`](https://github.com/stoatworks-labs/vertigo/releases/download/v0.1.0/vertigo-0.1.0-windows-x86_64-setup.exe) | 209 KB |
+| x64 · .exe installer | [`vertigo-0.1.1-windows-x86_64-setup.exe`](https://github.com/stoatworks-labs/vertigo/releases/download/v0.1.1/vertigo-0.1.1-windows-x86_64-setup.exe) | 210 KB |
 | x64 · .zip archive | [`vertigo-windows-x86_64.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-windows-x86_64.zip) | 100 KB |
 | x64 · .zip archive (OpenFX — Resolve, Vegas, Nuke) | [`vertigo-ofx-windows-x86_64.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-ofx-windows-x86_64.zip) | 62 KB |
 
@@ -48,7 +48,7 @@ Resolve, Nuke, Natron and Vegas.
 
 All builds, checksums and release notes: [github.com/stoatworks-labs/vertigo/releases](https://github.com/stoatworks-labs/vertigo/releases).
 
-The Windows builds are unsigned, so SmartScreen warns once.
+macOS builds are signed and notarised and open normally. The Windows builds are unsigned, so SmartScreen warns once.
 
 <!-- downloads:end -->
 
