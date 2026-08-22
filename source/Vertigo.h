@@ -140,7 +140,11 @@ private:
 	ffglex::FFGLShader shader;
 	ffglex::FFGLScreenQuad quad;
 
-	float params[ PT_COUNT ];
+	/// Zero-initialised: the constructor writes a default for every real
+	/// control, but the About block's ids are never stored to -- pressing a
+	/// button opens a browser and returns -- so without this GetFloatParameter
+	/// hands the host whatever was on the stack for them.
+	float params[ PT_COUNT ] = {};
 
 	/// GetTextParameter hands the host a bare pointer, so the string has to
 	/// outlive the call.
