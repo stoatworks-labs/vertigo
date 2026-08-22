@@ -1,4 +1,4 @@
-# Running Porthole — Gatekeeper, SmartScreen and firewalls
+# Running Vertigo — Gatekeeper, SmartScreen and firewalls
 
 macOS builds are signed and notarised, so they just open. The Windows
 builds are unsigned and SmartScreen will object once. This page covers

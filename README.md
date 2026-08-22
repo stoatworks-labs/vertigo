@@ -92,8 +92,10 @@ and restart Resolume. It appears under Effects as **Vertigo**.
 `/Library/OFX/Plugins` (macOS) or `C:\Program Files\Common Files\OFX\Plugins`
 (Windows). It appears under the **Stoatworks** group.
 
-The macOS builds are unsigned — see [docs/UNSIGNED.md](docs/UNSIGNED.md) for what
-Gatekeeper will say and what to do about it.
+The macOS builds are Developer ID-signed and notarised, so they load with no
+Gatekeeper step. The Windows builds are unsigned — see
+[docs/UNSIGNED.md](docs/UNSIGNED.md) for what SmartScreen will say and what to do
+about it.
 
 ## Controls
 
