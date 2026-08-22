@@ -110,6 +110,33 @@ private:
 	/// the host re-reads the sliders. `presetIndex` is 1-based; 0 is Custom.
 	void applyPreset( int presetIndex );
 
+	/// The active preset's value for `id`, or -1 if this preset does not cover
+	/// it. Preset values are all 0..1, so a negative is an unambiguous "no".
+	float presetValue( int presetIndex, unsigned int id ) const;
+
+	/// What the effect should actually render `id` with. A parameter a live
+	/// preset covers takes the preset's value; everything else takes the
+	/// host's. See the note on hostValues for why the preset cannot simply
+	/// overwrite params[] and expect it to stay overwritten.
+	float effective( unsigned int id ) const;
+
+	/// What the HOST last sent for each parameter, which is not the same thing
+	/// as what the plugin is rendering with.
+	///
+	/// FFGL's host owns parameter state. It may push its own values back down
+	/// at any time, and nothing obliges it to act on the value events a plugin
+	/// raises when it changes one itself. So a plugin that applies a preset by
+	/// writing params[] and trusting the host to follow is relying on
+	/// behaviour the specification does not promise -- and when the host
+	/// instead restates the values it still believes in, the "an edit means
+	/// the operator has taken over" rule sees a change and drops straight back
+	/// to Custom. That is issue #2: the preset appears not to stick.
+	///
+	/// Keeping the host's own last word separately is what tells the two apart.
+	/// An operator's edit differs from what the host last sent; the host
+	/// restating itself does not.
+	float hostValues[ PT_COUNT ];
+
 	ffglex::FFGLShader shader;
 	ffglex::FFGLScreenQuad quad;
 

@@ -81,6 +81,11 @@ Vertigo::Vertigo()
 
 	params[ PT_PRESET ]   = 0.0f; //Custom: the sliders are the truth
 
+	// The host has not said anything yet, so its last word is the defaults it
+	// is about to be told about.
+	for( unsigned int i = 0; i < PT_COUNT; ++i )
+		hostValues[ i ] = params[ i ];
+
 	//---------------------------------------------------------------------
 	// Declaration.
 	//
@@ -226,21 +231,23 @@ FFResult Vertigo::ProcessOpenGL( ProcessOpenGLStruct* pGL )
 	const float aspect = static_cast< float >( picture.Width ) / static_cast< float >( picture.Height );
 	shader.Set( "Aspect", aspect );
 
-	const double relief = reliefFromParam( params[ PT_RELIEF ] );
-	shader.Set( "Sigma", static_cast< float >( sigmaFromParam( params[ PT_DOLLY ] ) ) );
+	// effective(), not params[], for everything a preset can cover: the host
+	// may still be pushing its own idea of those values down at us.
+	const double relief = reliefFromParam( effective( PT_RELIEF ) );
+	shader.Set( "Sigma", static_cast< float >( sigmaFromParam( effective( PT_DOLLY ) ) ) );
 	shader.Set( "Relief", static_cast< float >( relief ) );
 	//The anchor goes to the GPU already through the relief map, so the shader
 	//never has to know that the two are the same function.
-	shader.Set( "AnchorDelta", static_cast< float >( anchorDisparity( params[ PT_ANCHOR ], relief ) ) );
+	shader.Set( "AnchorDelta", static_cast< float >( anchorDisparity( effective( PT_ANCHOR ), relief ) ) );
 
 	shader.Set( "DepthMode", params[ PT_DEPTH ] );
-	shader.Set( "Gamma", static_cast< float >( gammaFromParam( params[ PT_FALLOFF ] ) ) );
-	shader.Set( "DepthSmooth", static_cast< float >( smoothFromParam( params[ PT_SMOOTH ] ) ) );
+	shader.Set( "Gamma", static_cast< float >( gammaFromParam( effective( PT_FALLOFF ) ) ) );
+	shader.Set( "DepthSmooth", static_cast< float >( smoothFromParam( effective( PT_SMOOTH ) ) ) );
 
 	shader.Set( "Centre", params[ PT_CENTRE_X ] - 0.5f, params[ PT_CENTRE_Y ] - 0.5f );
 	shader.Set( "Overscan", static_cast< float >( overscanFromParam( params[ PT_OVERSCAN ] ) ) );
 
-	shader.Set( "EdgeMode", params[ PT_EDGES ] );
+	shader.Set( "EdgeMode", effective( PT_EDGES ) );
 	shader.Set( "Taps", static_cast< float >( tapsFromParam( params[ PT_QUALITY ] ) ) );
 
 	quad.Draw();
@@ -274,33 +281,81 @@ FFResult Vertigo::SetFloatParameter( unsigned int index, float value )
 		return FF_SUCCESS;
 	}
 
-	// A slider moved while a preset is active means the operator has taken
-	// over: the dropdown falls back to Custom. The equality guard matters —
-	// hosts that honour the value events echo the preset's own values straight
-	// back through here, and that echo must not un-set the preset.
-	const float previous = params[ index ];
-
 	//Deliberately not logged. A parameter change is not a diagnostic event: the
 	//host already shows the value, and an operator animating a slider would put
 	//a line in the log every frame. This log exists for the shader that will not
 	//compile, and it is worth nothing if it is buried.
-	params[ index ] = value;
+	const float lastFromHost = hostValues[ index ];
+	hostValues[ index ]      = value;
+	params[ index ]          = value;
 
+	// A slider moved while a preset is active means the operator has taken
+	// over, and the dropdown falls back to Custom. Two things that are NOT an
+	// operator moving a slider arrive through this same call, and reading
+	// either as an edit is what makes a preset look like it will not stick:
+	//
+	//   - a host that honours the value events raised by applyPreset reads the
+	//     new values and hands them straight back;
+	//   - a host that does not simply carries on pushing the values it still
+	//     believes in, which are the ones from before the preset.
+	//
+	// So neither is judged by whether the value changed -- both changed
+	// something -- but by what the value IS. Matching the preset is the first
+	// case, matching what the host last sent is the second, and anything else
+	// is a person turning a knob.
 	const int active = int( std::lround( params[ PT_PRESET ] ) );
-	if( active > 0 && std::fabs( value - previous ) > 1e-4f )
-	{
-		for( unsigned int id : kPresetParamIDs )
-		{
-			if( id == index )
-			{
-				params[ PT_PRESET ] = 0.0f;
-				RaiseParamEvent( PT_PRESET, FF_EVENT_FLAG_VALUE );
-				break;
-			}
-		}
-	}
+	if( active <= 0 )
+		return FF_SUCCESS;
+
+	const float covered = presetValue( active, index );
+	if( covered < 0.0f )
+		return FF_SUCCESS;//not a parameter this preset has an opinion about
+
+	// A quantisation allowance rather than a float epsilon. A host that keeps
+	// its parameters as anything shorter than a float -- or that round-trips
+	// them through a UI, a MIDI value or a saved composition -- hands back a
+	// number near ours rather than ours, and 1e-4 was tight enough to read
+	// that as an edit.
+	constexpr float kSame = 1e-3f;
+
+	if( std::fabs( value - covered ) <= kSame )
+		return FF_SUCCESS;
+
+	if( std::fabs( value - lastFromHost ) <= kSame )
+		return FF_SUCCESS;
+
+	// Logged, unlike an ordinary parameter change: this one is a state change
+	// an operator can be surprised by, it happens once rather than per frame,
+	// and issue #2 needed a code read precisely because nothing said it had
+	// happened.
+	vertigo::diag::info( "preset dropped to Custom: parameter " + std::to_string( index )
+	            + " moved to " + std::to_string( value )
+	            + " (preset says " + std::to_string( covered )
+	            + ", host last said " + std::to_string( lastFromHost ) + ")" );
+
+	params[ PT_PRESET ] = 0.0f;
+	RaiseParamEvent( PT_PRESET, FF_EVENT_FLAG_VALUE );
 
 	return FF_SUCCESS;
+}
+
+float Vertigo::presetValue( int presetIndex, unsigned int id ) const
+{
+	if( presetIndex <= 0 || presetIndex > vertigo::presets::kCount )
+		return -1.0f;
+
+	const vertigo::presets::Preset& preset = vertigo::presets::kPresets[ presetIndex - 1 ];
+	for( int j = 0; j < vertigo::presets::kParamCount; ++j )
+		if( kPresetParamIDs[ j ] == id )
+			return preset.v[ j ];
+
+	return -1.0f;
+}
+
+float Vertigo::effective( unsigned int id ) const
+{
+	const float fromPreset = presetValue( int( std::lround( params[ PT_PRESET ] ) ), id );
+	return fromPreset >= 0.0f ? fromPreset : params[ id ];
 }
 
 void Vertigo::applyPreset( int presetIndex )
@@ -308,7 +363,17 @@ void Vertigo::applyPreset( int presetIndex )
 	params[ PT_PRESET ] = float( presetIndex );
 
 	if( presetIndex <= 0 || presetIndex > vertigo::presets::kCount )
+	{
+		vertigo::diag::info( "preset: Custom" );
 		return;//Custom: the sliders keep whatever they said
+	}
+
+	vertigo::diag::info( std::string( "preset: " ) + vertigo::presets::kPresets[ presetIndex - 1 ].name );
+
+	// hostValues is deliberately NOT written here. It is the record of what the
+	// host has said, and the host has not said anything -- if this wrote to it,
+	// the host's next restatement of its own values would read as an operator
+	// edit and drop the preset on the spot.
 
 	const vertigo::presets::Preset& preset = vertigo::presets::kPresets[ presetIndex - 1 ];
 	for( int j = 0; j < vertigo::presets::kParamCount; ++j )
@@ -330,7 +395,11 @@ float Vertigo::GetFloatParameter( unsigned int index )
 	if( index >= PT_COUNT )
 		return 0.0f;
 
-	return params[ index ];
+	// The effective value, so a host that re-reads its sliders after a preset
+	// -- on a value event, or when saving the composition -- gets the numbers
+	// the effect is actually rendering with rather than the ones it happened
+	// to send last.
+	return effective( index );
 }
 
 FFResult Vertigo::SetTextParameter( unsigned int index, const char* )

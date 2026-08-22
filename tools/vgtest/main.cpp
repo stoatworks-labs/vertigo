@@ -461,6 +461,156 @@ bool readExactly( void* into, size_t bytes )
 	return true;
 }
 
+
+//---------------------------------------------------------------------------
+/// Prove a factory preset survives whatever the host does next.
+///
+/// FFGL's host owns parameter state and is free to push it back down at any
+/// time, and nothing in the specification obliges it to act on the value
+/// events a plugin raises when it changes a parameter itself. So there are
+/// three hosts to survive, and the plugin cannot tell which one it is talking
+/// to:
+///
+///   - one that honours the events and hands the new values straight back;
+///   - one that ignores them and carries on restating the values it still
+///     believes in, which are the ones from before the preset;
+///   - one that honours them but keeps its parameters shorter than a float, so
+///     what comes back is near the preset rather than equal to it.
+///
+/// All three arrive as SetFloatParameter calls carrying a changed value, which
+/// is why "the value changed, so the operator must have taken over" is the
+/// wrong test and why issue #2's reporter saw the dropdown snap back to Custom
+/// the instant they chose anything.
+///
+/// No GL here: this is the parameter plumbing, not the picture.
+//---------------------------------------------------------------------------
+int runPresetTest()
+{
+	using namespace vertigo::presets;
+
+	// The display names of the parameters a preset covers, in presets::Param
+	// order. Looked up through the plugin's own declaration rather than by
+	// index, so a reordering cannot leave this quietly driving the wrong one.
+	static const char* const kCoveredNames[ kParamCount ] = {
+		"Dolly", "Relief", "Anchor", "Falloff", "Smooth", "Edges"
+	};
+
+	enum class Host
+	{
+		Honours,
+		Ignores,
+		Quantises
+	};
+	struct HostCase
+	{
+		Host kind;
+		const char* name;
+	};
+	const HostCase hosts[] = {
+		{ Host::Honours, "honours value events" },
+		{ Host::Ignores, "ignores value events" },
+		{ Host::Quantises, "honours, 1/1000 steps" },
+	};
+
+	int failures = 0;
+
+	for( const HostCase& host : hosts )
+	{
+		for( int preset = 1; preset <= kCount; ++preset )
+		{
+			Vertigo plugin;
+
+			auto indexOf = [ & ]( const char* name ) -> int {
+				for( unsigned int i = 0; i < plugin.GetNumParams(); ++i )
+				{
+					const char* declared = plugin.GetParamName( i );
+					if( declared != nullptr && std::strcmp( declared, name ) == 0 )
+						return int( i );
+				}
+				return -1;
+			};
+
+			const int presetIndex = indexOf( "Preset" );
+			int covered[ kParamCount ];
+			bool namesOk = presetIndex >= 0;
+			for( int j = 0; j < kParamCount; ++j )
+			{
+				covered[ j ] = indexOf( kCoveredNames[ j ] );
+				namesOk      = namesOk && covered[ j ] >= 0;
+			}
+			if( !namesOk )
+			{
+				std::fprintf( stderr, "presets: a covered parameter is not declared under the name this test expects\n" );
+				return 1;
+			}
+
+			// What the host thinks the sliders say before the operator reaches
+			// for the dropdown.
+			float hostOwn[ kParamCount ];
+			for( int j = 0; j < kParamCount; ++j )
+				hostOwn[ j ] = plugin.GetFloatParameter( unsigned( covered[ j ] ) );
+
+			// The operator picks a preset.
+			plugin.SetFloatParameter( unsigned( presetIndex ), float( preset ) );
+
+			// And now the host says its piece.
+			for( int j = 0; j < kParamCount; ++j )
+			{
+				float back = 0.0f;
+				switch( host.kind )
+				{
+				case Host::Honours:
+					back = plugin.GetFloatParameter( unsigned( covered[ j ] ) );
+					break;
+				case Host::Ignores:
+					back = hostOwn[ j ];
+					break;
+				case Host::Quantises:
+					back = std::round( plugin.GetFloatParameter( unsigned( covered[ j ] ) ) * 1000.0f ) / 1000.0f;
+					break;
+				}
+				plugin.SetFloatParameter( unsigned( covered[ j ] ), back );
+			}
+
+			const int still = int( std::lround( plugin.GetFloatParameter( unsigned( presetIndex ) ) ) );
+			bool ok         = still == preset;
+
+			// Still selected is not enough -- it has to be what renders.
+			for( int j = 0; j < kParamCount; ++j )
+			{
+				const float want = kPresets[ preset - 1 ].v[ j ];
+				const float got  = plugin.GetFloatParameter( unsigned( covered[ j ] ) );
+				ok               = ok && std::fabs( got - want ) <= 1e-4f;
+			}
+
+			if( !ok )
+			{
+				std::printf( "presets %-22s %-20s FAILED (shows %d)\n", host.name, kPresets[ preset - 1 ].name, still );
+				++failures;
+				continue;
+			}
+
+			// An operator turning a covered knob must still drop to Custom --
+			// a preset that cannot be left is no better than one that will not
+			// stick.
+			const float moved = kPresets[ preset - 1 ].v[ 0 ] > 0.5f ? 0.10f : 0.90f;
+			plugin.SetFloatParameter( unsigned( covered[ 0 ] ), moved );
+			const int after = int( std::lround( plugin.GetFloatParameter( unsigned( presetIndex ) ) ) );
+			if( after != 0 )
+			{
+				std::printf( "presets %-22s %-20s FAILED (an edit left it on %d)\n", host.name, kPresets[ preset - 1 ].name, after );
+				++failures;
+				continue;
+			}
+
+			std::printf( "presets %-22s %-20s ok\n", host.name, kPresets[ preset - 1 ].name );
+		}
+	}
+
+	std::printf( "%s\n", failures == 0 ? "presets: all ok" : "presets: FAILURES" );
+	return failures == 0 ? 0 : 1;
+}
+
 void usage()
 {
 	std::printf(
@@ -477,6 +627,7 @@ void usage()
 		"  --anchor          measure how far the anchor surface moved (it should not)\n"
 		"  --depth           measure the depth-map solve against the same solve in C++\n"
 		"  --list            print every parameter and its default, then exit\n"
+		"  --presets         every factory preset survives every host behaviour\n"
 		"  --pipe            read raw RGBA frames from stdin, write them to stdout,\n"
 		"                    so real footage can be put through the real shader:\n"
 		"                        ffmpeg ... -f rawvideo -pix_fmt rgba - \\\n"
@@ -498,6 +649,7 @@ int main( int argc, char** argv )
 	bool anchor            = false;
 	bool depth             = false;
 	bool ramp              = false;
+	bool presetCheck       = false;
 	bool pipeMode          = false;
 	std::string scriptPath;
 	std::vector< std::pair< std::string, float > > overrides;
@@ -527,6 +679,8 @@ int main( int argc, char** argv )
 			ramp = true;
 		else if( arg == "--list" )
 			listOnly = true;
+		else if( arg == "--presets" )
+			presetCheck = true;
 		else if( arg == "--pipe" )
 			pipeMode = true;
 		else if( arg == "--script" )
@@ -555,6 +709,12 @@ int main( int argc, char** argv )
 			return 2;
 		}
 	}
+
+	// Before the size check and before any GL: the parameter plumbing has
+	// nothing to do with either, and a self-test that needed a GPU would not
+	// run on a CI box without one.
+	if( presetCheck )
+		return runPresetTest();
 
 	if( width <= 0 || height <= 0 )
 	{

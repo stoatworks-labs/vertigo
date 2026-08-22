@@ -151,6 +151,43 @@ checks exist because a self-consistent mirror proves consistency and nothing els
 
 `tools/verify.sh` now sweeps the inverted half of the relief range explicitly.
 
+### The host owns the parameters, and a preset cannot forget it
+
+Reported from the field as issue #2: choosing a factory preset in Resolume did
+nothing and the dropdown snapped straight back to `Custom`.
+
+The pattern was copy-based — `applyPreset` writes the values into `params[]` and
+raises `FF_EVENT_FLAG_VALUE` so the host re-reads its sliders — and it rests on
+an assumption FFGL never makes. **The host owns parameter state.** It may push
+its own values back down whenever it likes, and nothing obliges it to act on a
+value event at all. Resolume does not: it carries on restating the values it
+still believes in, which are the ones from before the preset.
+
+Those restatements arrive as `SetFloatParameter` calls carrying a changed value,
+and the rule "a covered parameter changed, so the operator has taken over" duly
+fired on the host's own echo. Hence a preset that could not be selected.
+
+Two things fix it, and both are needed:
+
+- **A preset is an override, not a write.** `effective()` returns the preset's
+  value for a covered parameter, and the render and `GetFloatParameter` both go
+  through it. `params[]` is still written, so a host that *does* honour the
+  events agrees with us, but nothing depends on that any more.
+- **`hostValues[]` records what the host last SENT**, which is not what the
+  plugin is rendering with. An operator's edit differs from the host's last
+  word; the host restating itself does not. Judge by what the value *is* —
+  matching the preset means it is an echo, matching the host's last word means
+  it is a restatement, anything else is a person turning a knob.
+
+`vgtest --presets` drives all three hosts (honours the events, ignores them,
+honours them but quantises to 1/1000) across every preset, with no GL involved.
+It fails on the pre-fix code in exactly the "ignores" column, which is the shape
+of the bug as reported.
+
+**The same copy-based pattern is in porthole, old-cathode, asciify, downpour,
+orrery and tinsel.** None of them has been fixed, and none of their presets has
+ever been confirmed working in a host.
+
 ### The macOS one that will get you
 
 **`CMAKE_OSX_ARCHITECTURES` must be set before the first target is created.** Set
@@ -404,6 +441,10 @@ thing that measures anything.
   every other rendered plugin in the fleet shipped before anyone had seen it in
   a host, and this one has now been seen. `cmake --install` puts the bundle
   where Arena looks.
+- **No preset has been seen working in a real host.** `vgtest --presets`
+  exercises the three host behaviours that matter and issue #2's failure
+  reproduces and clears there, but the fix has not itself been in front of
+  Resolume — the reporter's next run is the first real test of it.
 - **It has never been loaded into Resolve**, or any other OpenFX host. The OFX
   build has only met `ofxprobe`, so that host's real texture sizes and its
   premultiplication behaviour are still unconfirmed — exactly what the offline

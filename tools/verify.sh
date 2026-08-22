@@ -42,6 +42,19 @@ if [ ! -x "$BUILD/vgtest" ]; then
 fi
 
 # ---------------------------------------------------------------------------
+# The parameter plumbing, first: it needs no GPU, it takes no time, and it is
+# the half of the plugin an external user actually got stuck on (issue #2).
+# ---------------------------------------------------------------------------
+step "presets: every factory preset survives every host behaviour"
+if "$BUILD/vgtest" --presets > "${TMPDIR:-/tmp}/vertigo-presets.txt" 2>&1; then
+	tail -1 "${TMPDIR:-/tmp}/vertigo-presets.txt"
+else
+	printf '\033[31mFAILED: see %svertigo-presets.txt\033[0m\n' "${TMPDIR:-/tmp}/"
+	grep FAILED "${TMPDIR:-/tmp}/vertigo-presets.txt" | head -8
+	failures=$((failures + 1))
+fi
+
+# ---------------------------------------------------------------------------
 # The GLSL against the C++.
 # ---------------------------------------------------------------------------
 step "probe: the GPU against Dolly.cpp, over dolly x relief x anchor x falloff"
