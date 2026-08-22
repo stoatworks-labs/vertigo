@@ -22,15 +22,15 @@ Resolve, Nuke, Natron and Vegas.
 
 ## Download
 
-**[v0.1.1](https://github.com/stoatworks-labs/vertigo/releases/tag/v0.1.1)** — prebuilt for macOS and Windows. Pick your platform:
+**[v0.1.2](https://github.com/stoatworks-labs/vertigo/releases/tag/v0.1.2)** — prebuilt for macOS and Windows. Pick your platform:
 
 <details>
 <summary><b>macOS</b> — Universal (Apple Silicon + Intel)</summary>
 
 | Build | Download | Size |
 | --- | --- | --- |
-| Universal (Apple Silicon + Intel) · .dmg disk image | [`vertigo-0.1.1-macos-universal.dmg`](https://github.com/stoatworks-labs/vertigo/releases/download/v0.1.1/vertigo-0.1.1-macos-universal.dmg) | 201 KB |
-| Universal (Apple Silicon + Intel) · .zip archive | [`vertigo-macos-universal.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-macos-universal.zip) | 155 KB |
+| Universal (Apple Silicon + Intel) · .dmg disk image | [`vertigo-0.1.2-macos-universal.dmg`](https://github.com/stoatworks-labs/vertigo/releases/download/v0.1.2/vertigo-0.1.2-macos-universal.dmg) | 204 KB |
+| Universal (Apple Silicon + Intel) · .zip archive | [`vertigo-macos-universal.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-macos-universal.zip) | 159 KB |
 | Universal (Apple Silicon + Intel) · .zip archive (OpenFX — Resolve, Vegas, Nuke) | [`vertigo-ofx-macos-universal.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-ofx-macos-universal.zip) | 230 KB |
 
 </details>
@@ -40,8 +40,8 @@ Resolve, Nuke, Natron and Vegas.
 
 | Build | Download | Size |
 | --- | --- | --- |
-| x64 · .exe installer | [`vertigo-0.1.1-windows-x86_64-setup.exe`](https://github.com/stoatworks-labs/vertigo/releases/download/v0.1.1/vertigo-0.1.1-windows-x86_64-setup.exe) | 210 KB |
-| x64 · .zip archive | [`vertigo-windows-x86_64.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-windows-x86_64.zip) | 100 KB |
+| x64 · .exe installer | [`vertigo-0.1.2-windows-x86_64-setup.exe`](https://github.com/stoatworks-labs/vertigo/releases/download/v0.1.2/vertigo-0.1.2-windows-x86_64-setup.exe) | 212 KB |
+| x64 · .zip archive | [`vertigo-windows-x86_64.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-windows-x86_64.zip) | 103 KB |
 | x64 · .zip archive (OpenFX — Resolve, Vegas, Nuke) | [`vertigo-ofx-windows-x86_64.zip`](https://github.com/stoatworks-labs/vertigo/releases/latest/download/vertigo-ofx-windows-x86_64.zip) | 62 KB |
 
 </details>
