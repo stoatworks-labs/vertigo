@@ -36,8 +36,9 @@ ground giving way rather than as a zoom.
 
 Restart Resolume; it appears under Effects as **Vertigo**.
 
-For OpenFX, put `Vertigo.ofx.bundle` in `/Library/OFX/Plugins` (macOS) or
-`C:\Program Files\Common Files\OFX\Plugins` (Windows). It appears under the **Stoatworks** group.
+For OpenFX, put `Vertigo.ofx.bundle` in `/Library/OFX/Plugins` (macOS),
+`C:\Program Files\Common Files\OFX\Plugins` (Windows) or `/usr/OFX/Plugins`
+(Linux). It appears under the **Stoatworks** group.
 
 The macOS builds are Developer ID-signed and notarised. The Windows builds are unsigned, but only
 the installer trips SmartScreen — see [UNSIGNED.md](UNSIGNED.md).
