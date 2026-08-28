@@ -208,9 +208,13 @@ on the development machine.
   build is still only checked against `ofxprobe`, so real texture sizes and that
   host's premultiplication behaviour remain unconfirmed — exactly what an
   offline harness cannot tell you about, because it supplies its own textures.
-- **The Windows build has never been run.** It compiles: the v0.1.0 release ships
-  a Windows x64 DLL, an OpenFX bundle and an installer, all built in CI. Nobody
-  has loaded any of them into a Windows host.
+- **The Windows build has been run, by somebody who is not the author.** It
+  compiles — the v0.1.0 release ships a Windows x64 DLL, an OpenFX bundle and an
+  installer, all built in CI — and an external user ran it on Windows and
+  reported issue #2, that choosing a factory preset snapped the dropdown back to
+  Custom. That was a real host-behaviour bug the harness could not see, fixed in
+  `a0fb025`. It is one user on one machine: nothing is known about which GPU or
+  driver, and nobody has timed it there.
 - **Nothing has been timed.** Best quality is 16 samples per pixel and each one
   runs the depth solve three times in the Luma and Alpha modes; nobody has
   measured what that costs at 4K.

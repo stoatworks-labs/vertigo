@@ -19,10 +19,13 @@ v0.1.2 Aug 22 2026), six release assets.
 `stoatworks-labs.com/software/vertigo/`, the video-plugins suite (16th member),
 demo `vertigo-demo.stoatworks-labs.com`, YouTube `cWMUqKOl4fU`, Instagram reel
 `DcIPqtvChgR`. **It RUNS IN RESOLUME ARENA** — Allan confirmed 2026-08-17, so the
-usual "never loaded into a host" caveat is retired. Resolve has still never
-opened it (OFX only ever met `ofxprobe`), no Windows build has been run, nothing
-timed, and the depth modes have only ever been fed a radial card and a linear
-ramp — never a real rendered depth pass.
+usual "never loaded into a host" caveat is retired. **Windows has been run too**,
+by an external user who reported issue #2 from it — factory presets snapping back
+to Custom, a host-behaviour bug no harness here reaches, fixed in `a0fb025`; that
+is one user on one machine, GPU and driver unknown. Resolve has still never
+opened it (OFX only ever met `ofxprobe`), nothing is timed, and the depth modes
+have only ever been fed a radial card and a linear ramp — never a real rendered
+depth pass.
 
 **The one idea:** the model is written in **disparity, not depth**.
 `m = (1 - σ·d_a)/(1 - σ·d)` with the field normalised to 0..1 and σ < 1 by
