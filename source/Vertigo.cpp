@@ -21,7 +21,7 @@ static CFFGLPluginInfo PluginInfo(
 	0,                                             // Plugin major version number
 	1,                                             // Plugin minor version number
 	FF_EFFECT,                                     // Plugin type
-	"Dolly zoom: the shot where the world moves",  // Plugin description
+	"The dolly zoom: the shot where one thing holds still and the world moves.\n\nOne camera move and one lens move, arranged to cancel. The camera tracks along its own axis and the focal length changes to hold one surface at exactly the size it already was. That surface does not move and everything at any other distance does, which is why it reads as the ground giving way rather than as a zoom.\n\nThe anchor is a real distance rather than a look, so it is worth setting it on the thing you want held and then moving the dolly, rather than the other way round.\n\nStart from a Preset, at the bottom.",// Plugin description
 	"Vertigo FFGL effect"                          // About
 );
 
