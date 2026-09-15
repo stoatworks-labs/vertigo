@@ -18,6 +18,10 @@ The dolly zoom — the shot where one thing holds still and the world moves — 
 Arena and Avenue, and an [OpenFX](https://openeffects.org) effect for DaVinci
 Resolve, Nuke, Natron and Vegas.
 
+![Vertigo's geometry card put through a pull back: the centre locked, the grid opening out away from it](docs/hero.png)
+
+<sub>The plugin's geometry card put through a pull back — rendered by the plugin's own offline harness in a headless GL context, not a Resolume screen capture. The centre is locked and the grid opens out away from it, which is the shot: one surface holding still while everything at another distance moves. The grid bends because Radial invents its depth as a surface of revolution about the optical axis; a real depth map does not do that.</sub>
+
 <!-- downloads:start -->
 
 ## Download
