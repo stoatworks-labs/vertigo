@@ -9,9 +9,10 @@
 > across 45 more (0.8 levels), and the anchor surface is confirmed not to move at
 > all — 0.0000 of travel, while the rest of the frame travels 20% of the frame
 > (see [Status](#status)). It **runs in Resolume Arena** — loaded and confirmed
-> working by the author on 2026-08-17 — but it has never been loaded into Resolve
-> or any other OpenFX host, and no Windows build has been run. Check it in your
-> own rig before trusting it in a show.
+> working by the author on 2026-08-17 — and an external user has run v0.1.1 in
+> Resolume on Windows 11, reporting issue #2 from it. It has never been loaded
+> into Resolve or any other OpenFX host. Check it in your own rig before trusting
+> it in a show.
 
 The dolly zoom — the shot where one thing holds still and the world moves — as an
 [FFGL](https://github.com/resolume/ffgl) effect for [Resolume](https://resolume.com)
