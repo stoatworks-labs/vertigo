@@ -449,9 +449,11 @@ thing that measures anything.
   build has only met `ofxprobe`, so that host's real texture sizes and its
   premultiplication behaviour are still unconfirmed — exactly what the offline
   harness cannot tell you about, because it supplies its own textures.
-- **The Windows build has never been run.** It compiles — the v0.1.0 release
-  ships a Windows x64 DLL, an OpenFX bundle and an NSIS installer, all built in
-  CI — but nobody has loaded any of them into a Windows host. A
+- **The Windows build has been run, by somebody who is not the author.** It
+  compiles — the v0.1.0 release ships a Windows x64 DLL, an OpenFX bundle and an
+  NSIS installer, all built in CI — and an external user ran it in Resolume on
+  Windows 11 and reported issue #2, a factory preset snapping back to Custom,
+  fixed in `a0fb025`. Nobody has timed it there. A
   `workflow_dispatch` run of `release.yml` builds both platforms and publishes
   nothing, which is the cheap way to check the build without cutting anything.
 - **Nothing has been timed at all.** Best quality is 16 samples per pixel, and in
