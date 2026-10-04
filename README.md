@@ -10,7 +10,8 @@
 > all — 0.0000 of travel, while the rest of the frame travels 20% of the frame
 > (see [Status](#status)). It **runs in Resolume Arena** — loaded and confirmed
 > working by the author on 2026-08-17 — and an external user has run v0.1.1 in
-> Resolume on Windows 11, reporting issue #2 from it. It has never been loaded
+> Resolume on Windows 11, reporting issue #2 from it; the author has since run
+> v0.1.4 in Resolume Arena on Windows, on a software renderer. It has never been loaded
 > into Resolve or any other OpenFX host. Check it in your own rig before trusting
 > it in a show.
 
@@ -213,13 +214,18 @@ on the development machine.
   build is still only checked against `ofxprobe`, so real texture sizes and that
   host's premultiplication behaviour remain unconfirmed — exactly what an
   offline harness cannot tell you about, because it supplies its own textures.
-- **The Windows build has been run, by somebody who is not the author.** It
+- **The Windows build has been run in Resolume, by an outside user and since by
+  the author.** It
   compiles — the v0.1.0 release ships a Windows x64 DLL, an OpenFX bundle and an
   installer, all built in CI — and an external user ran it on Windows and
   reported issue #2, that choosing a factory preset snapped the dropdown back to
   Custom. That was a real host-behaviour bug the harness could not see, fixed in
-  `a0fb025`. It is one user on one machine: nothing is known about which GPU or
-  driver, and nobody has timed it there.
+  `a0fb025`. That user's log shows an NVIDIA GeForce RTX 4070 Laptop GPU on
+  driver 595.79. On 2026-08-27 the author put v0.1.4 through Resolume Arena
+  7.27.1 on a Windows machine with no graphics card, on a software renderer: all
+  seven presets hold, and touching a control a preset covers drops it back to
+  Custom as it should. That checks the preset logic in the host, not how it looks
+  or performs on a GPU, and nobody has timed it on Windows.
 - **Nothing has been timed.** Best quality is 16 samples per pixel and each one
   runs the depth solve three times in the Luma and Alpha modes; nobody has
   measured what that costs at 4K.

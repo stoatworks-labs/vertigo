@@ -453,7 +453,9 @@ thing that measures anything.
   compiles — the v0.1.0 release ships a Windows x64 DLL, an OpenFX bundle and an
   NSIS installer, all built in CI — and an external user ran it in Resolume on
   Windows 11 and reported issue #2, a factory preset snapping back to Custom,
-  fixed in `a0fb025`. Nobody has timed it there. A
+  fixed in `a0fb025`. On 2026-08-27 the author ran v0.1.4 in Resolume Arena
+  7.27.1 on a Windows machine with no GPU (software renderer), and all seven
+  presets hold. Nobody has timed it on Windows. A
   `workflow_dispatch` run of `release.yml` builds both platforms and publishes
   nothing, which is the cheap way to check the build without cutting anything.
 - **Nothing has been timed at all.** Best quality is 16 samples per pixel, and in

@@ -22,7 +22,10 @@ demo `vertigo-demo.stoatworks-labs.com`, YouTube `cWMUqKOl4fU`, Instagram reel
 usual "never loaded into a host" caveat is retired. **Windows has been run too**,
 by an external user who reported issue #2 from it — factory presets snapping back
 to Custom, a host-behaviour bug no harness here reaches, fixed in `a0fb025`; that
-is one user on one machine, GPU and driver unknown. Resolve has still never
+user's log shows an NVIDIA GeForce RTX 4070 Laptop GPU, driver 595.79. On
+2026-08-27 I ran v0.1.4 in Resolume Arena 7.27.1 on a Windows machine with no
+graphics card (software renderer): all seven presets hold (issue #2 comment).
+Resolve has still never
 opened it (OFX only ever met `ofxprobe`), nothing is timed, and the depth modes
 have only ever been fed a radial card and a linear ramp — never a real rendered
 depth pass.
