@@ -1,25 +1,26 @@
 # Vertigo user guide
 
-Vertigo is **the dolly zoom — the shot where one thing holds still and the world moves** — as an
-FFGL effect for [Resolume](https://resolume.com) Arena and Avenue, and an OpenFX effect for
-DaVinci Resolve, Nuke, Natron and Vegas.
+Vertigo is the dolly zoom, the shot where one thing holds still and the world moves, as an FFGL
+effect for [Resolume](https://resolume.com) Arena and Avenue and an OpenFX effect for DaVinci
+Resolve, Nuke, Natron and Vegas.
 
 A dolly zoom is one camera move and one lens move arranged to cancel. The camera tracks along its
 own axis; the focal length changes to hold one surface at exactly the size it already was. That
-surface does not move, and everything at any other distance does — which is why it reads as the
-ground giving way rather than as a zoom.
+surface doesn't move, and everything at any other distance does, which is why it reads as the
+ground giving way rather than as a zoom. It's also a good deal cheaper than hiring a dolly, a
+zoom lens and someone to push.
 
 ![The dolly zoom, with the anchor surface holding still](hero.png)
 
 > **Before you rely on this:** the maths is measured against an independent implementation across
 > 180 parameter combinations, agreeing to within **0.9 of an 8-bit level**; the depth solve against
 > the same solve in double across 45 more (0.8 levels); and the anchor surface is confirmed not to
-> move **at all** — 0.0000 of travel, while the rest of the frame travels up to a quarter of the
+> move **at all** (0.0000 of travel) while the rest of the frame travels up to a quarter of the
 > picture. All 12 controls reach the picture.
 >
-> **It runs in Resolume Arena**, loaded and confirmed working. It has **never been loaded into
+> **It runs in Resolume Arena**, loaded and confirmed working. It's **never been loaded into
 > Resolve** or any other OpenFX host, the **Windows build has never been run** (it compiles in CI
-> and ships), and **nothing has been timed** — Best quality is 16 samples per pixel and each one
+> and ships), and **nothing has been timed**: Best quality is 16 samples per pixel and each one
 > runs the depth solve three times in the Luma and Alpha modes, and nobody has measured what that
 > costs at 4K.
 >
@@ -34,29 +35,29 @@ ground giving way rather than as a zoom.
 ~/Documents/Resolume Avenue/Extra Effects
 ```
 
-Restart Resolume; it appears under Effects as **Vertigo**.
+Restart Resolume; it shows up under Effects as **Vertigo**.
 
 For OpenFX, put `Vertigo.ofx.bundle` in `/Library/OFX/Plugins` (macOS),
 `C:\Program Files\Common Files\OFX\Plugins` (Windows) or `/usr/OFX/Plugins`
-(Linux). It appears under the **Stoatworks** group.
+(Linux). It shows up under the **Stoatworks** group.
 
 The macOS builds are Developer ID-signed and notarised. The Windows builds are unsigned, but only
-the installer trips SmartScreen — see [UNSIGNED.md](UNSIGNED.md).
+the installer trips SmartScreen; see [UNSIGNED.md](UNSIGNED.md).
 
 ---
 
 ## Where the depth comes from — read this first
 
-It is a **depth** effect, and a video clip has no depth. So the honest part of this plugin is where
-the depth comes from, and there are two answers.
+It's a **depth** effect, and a video clip has no depth. So the question this plugin has to answer
+is where the depth comes from, and there are two answers.
 
-**Radial invents a field** — near on the optical axis, falling away to the frame corners, or the
+**Radial invents a field**: near on the optical axis, falling away to the frame corners, or the
 reverse. Nothing is read out of the picture, so the geometry is a closed form with no failure
 cases, no holes and no dependence on what the clip contains. **It works on any footage at all**,
 and what it gives you is the *look* of the shot.
 
-**Luma and Alpha read a field out of the clip.** Given real depth — a rendered depth pass, a matte,
-a generated depth map baked into a channel — this is the actual reprojection, and the picture comes
+**Luma and Alpha read a field out of the clip.** Given real depth (a rendered depth pass, a matte,
+a generated depth map baked into a channel), this is the actual reprojection, and the picture comes
 apart in depth the way the real move does. Given an ordinary clip it turns brightness into
 geometry, which is either a mistake or an effect, depending on the clip.
 
@@ -74,8 +75,8 @@ Start on **Radial** unless you know your footage carries depth.
 
 **There are two nulls, and both are exact.** Dolly at the middle is no move; Relief at the middle
 is a scene with no depth. Either gives back the original picture byte for byte at Quality = Fast.
-That is worth knowing because it means neither control has a dead zone to hunt for — the middle is
-genuinely the middle.
+That's worth knowing, because it means neither control has a dead zone to hunt for: the middle is
+the middle, to the byte.
 
 ---
 
@@ -85,20 +86,20 @@ genuinely the middle.
 sits. 0.5 is linear.
 
 **Smooth** blurs the depth field, **not** the picture. It does nothing in Radial, which is already
-smooth; on a real depth map it is what stops a hard depth step smearing.
+smooth; on a real depth map it's what stops a hard depth step smearing.
 
 ## Frame and output
 
-**Centre X / Centre Y** put the optical axis where the subject is — the move is about that point,
-so this is the first thing to set on any shot where the subject is not dead centre.
+**Centre X / Centre Y** put the optical axis where the subject is. The move is about that point,
+so this is the first thing to set on any shot where the subject isn't dead centre.
 
 **Overscan** scales the picture to buy back the frame that a push in gives away.
 
 **Edges** decides what to show where a push in looks past the picture: Transparent, Black, Clamp,
 Mirror or Wrap.
 
-**Quality** is supersampling — Fast is 1 sample per pixel, Good 4, Best 16. **It does not change
-the geometry, only how it is sampled.**
+**Quality** is supersampling: Fast is 1 sample per pixel, Good 4, Best 16. **It doesn't change
+the geometry, only how it's sampled.**
 
 ---
 
@@ -106,7 +107,7 @@ the geometry, only how it is sampled.**
 
 **Pulling back magnifies the background**, which means reading from *inside* the picture, so
 nothing ever reaches the frame edge. **Pushing in shrinks it**, which means reading from *beyond*
-the picture — and that is what Edges and Overscan exist for.
+the picture, and that's what Edges and Overscan exist for.
 
 Both are the shot; only one explains itself, which is why the default is a pull back. If you want
 a push in, set Overscan before you go looking for a bug at the frame edge.
@@ -118,26 +119,26 @@ a push in, set Overscan before you go looking for a bug at the frame edge.
 Seven factory shots, from **Vertigo** through **Stairwell** to **Slam**. Picking one sets the shot
 controls; editing any of them afterwards falls back to Custom.
 
-**They deliberately leave Depth alone.** Whether a clip carries a usable depth map is a fact about
+**They leave Depth alone on purpose.** Whether a clip carries a usable depth map is a fact about
 the footage, not a look.
 
 ---
 
 ## If it looks wrong
 
-**The whole frame moves, including the thing I wanted held.** **Anchor** is not on that surface —
+**The whole frame moves, including the thing I wanted held.** **Anchor** isn't on that surface:
 1 is nearest, 0 furthest.
 
-**Nothing happens however far I drive the dolly.** **Relief** is at 0.5. A flat scene cannot be
+**Nothing happens however far I drive the dolly.** **Relief** is at 0.5. A flat scene can't be
 dolly-zoomed, and that null is exact rather than approximate.
 
-**The edges of the frame go strange on a push in.** Expected — see above. Raise **Overscan**, or
+**The edges of the frame go strange on a push in.** That's expected (see above). Raise **Overscan**, or
 pick a different **Edges** mode.
 
 **On my own footage it warps by brightness.** **Depth** is on Luma and the clip has no depth map.
 Switch to **Radial**.
 
-**A hard depth step smears.** Raise **Smooth** — it blurs the depth, not the picture.
+**A hard depth step smears.** Raise **Smooth**; it blurs the depth, not the picture.
 
 ---
 

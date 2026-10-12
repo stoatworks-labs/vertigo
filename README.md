@@ -2,27 +2,28 @@
 
 > **AI-assisted project.** This codebase was created with [Claude](https://claude.com/claude-code)
 > (Anthropic), directed and reviewed by a human author. The dolly-zoom maths is
-> verified numerically by an offline harness that drives the real plugin class in
-> a headless GL context: the GLSL is measured against an independent C++
-> implementation across 180 parameter combinations and agrees to within 0.9 of an
-> 8-bit level, the depth-map solve is measured against the same solve in double
-> across 45 more (0.8 levels), and the anchor surface is confirmed not to move at
-> all — 0.0000 of travel, while the rest of the frame travels 20% of the frame
-> (see [Status](#status)). It **runs in Resolume Arena** — loaded and confirmed
-> working by the author on 2026-08-17 — and an external user has run v0.1.1 in
-> Resolume on Windows 11, reporting issue #2 from it; the author has since run
-> v0.1.4 in Resolume Arena on Windows, on a software renderer. It has never been loaded
-> into Resolve or any other OpenFX host. Check it in your own rig before trusting
-> it in a show.
+> verified numerically by an offline harness that drives the plugin's own class in a
+> headless GL context, and the anchor surface doesn't move at all (0.0000 of travel)
+> while the rest of the frame travels 20% of the frame; the numbers are under
+> [Status](#status). It **runs in Resolume Arena**: I loaded it and confirmed it
+> working on 2026-08-17. An outside user has run v0.1.1 in Resolume on Windows 11,
+> reporting issue #2 from it, and I've since run v0.1.4 in Resolume Arena on Windows,
+> on a software renderer. It's never been loaded into Resolve or any other OpenFX
+> host. Check it in your own rig before trusting it in a show.
 
-The dolly zoom — the shot where one thing holds still and the world moves — as an
+The dolly zoom (the shot where one thing holds still and the world moves) as an
 [FFGL](https://github.com/resolume/ffgl) effect for [Resolume](https://resolume.com)
 Arena and Avenue, and an [OpenFX](https://openeffects.org) effect for DaVinci
-Resolve, Nuke, Natron and Vegas.
+Resolve, Nuke, Natron and Vegas. No track, no zoom lens and nobody pushing a dolly
+up a corridor.
 
 ![Vertigo's geometry card put through a pull back: the centre locked, the grid opening out away from it](docs/hero.png)
 
-<sub>The plugin's geometry card put through a pull back — rendered by the plugin's own offline harness in a headless GL context, not a Resolume screen capture. The centre is locked and the grid opens out away from it, which is the shot: one surface holding still while everything at another distance moves. The grid bends because Radial invents its depth as a surface of revolution about the optical axis; a real depth map does not do that.</sub>
+<sub>The plugin's geometry card put through a pull back, rendered by the plugin's own offline
+harness in a headless GL context rather than captured from Resolume. The centre is locked and the
+grid opens out away from it, which is the shot: one surface holding still while everything at
+another distance moves. The grid bends because Radial invents its depth as a surface of revolution
+about the optical axis; a real depth map doesn't do that.</sub>
 
 <!-- downloads:start -->
 
@@ -71,21 +72,21 @@ macOS builds are signed and notarised and open normally. The Windows builds are 
 
 A dolly zoom is one camera move and one lens move arranged to cancel. The camera
 tracks along its own axis; the focal length changes to hold one surface at
-exactly the size it already was. That surface does not move, and everything at
-any other distance does — which is why it reads as the ground giving way rather
+exactly the size it already was. That surface doesn't move, and everything at
+any other distance does, which is why it reads as the ground giving way rather
 than as a zoom. Hitchcock's cameraman worked it out for a stairwell in 1958 and
-it has been the shorthand for vertigo ever since.
+it's been the shorthand for vertigo ever since.
 
-It is a *depth* effect, and a video clip has no depth. So the honest part of this
-plugin is where the depth comes from, and there are two answers:
+It's a *depth* effect, and a video clip has no depth. So the question this plugin
+has to answer is where the depth comes from, and there are two answers:
 
-- **Radial** invents a field — near on the optical axis, falling away to the
+- **Radial** invents a field: near on the optical axis, falling away to the
   frame corners, or the reverse. Nothing is read out of the picture, so the
   geometry is a closed form with no failure cases, no holes, and no dependence on
   what the clip contains. It works on any footage at all, and what it gives you
   is the *look* of the shot.
-- **Luma** and **Alpha** read a field out of the clip. Given real depth — a
-  rendered depth pass, a matte, a generated depth map baked into a channel — this
+- **Luma** and **Alpha** read a field out of the clip. Given real depth (a
+  rendered depth pass, a matte, a generated depth map baked into a channel), this
   is the actual reprojection, and the picture comes apart in depth the way the
   real move does. Given an ordinary clip it turns brightness into geometry, which
   is either a mistake or an effect, depending on the clip.
@@ -101,14 +102,14 @@ Download the release for your platform, then:
 ~/Documents/Resolume Avenue/Extra Effects
 ```
 
-and restart Resolume. It appears under Effects as **Vertigo**.
+and restart Resolume. It shows up under Effects as **Vertigo**.
 
 **Resolve, Nuke, Natron, Vegas (OpenFX)** — put `Vertigo.ofx.bundle` in
 `/Library/OFX/Plugins` (macOS) or `C:\Program Files\Common Files\OFX\Plugins`
-(Windows). It appears under the **Stoatworks** group.
+(Windows). It shows up under the **Stoatworks** group.
 
 The macOS builds are Developer ID-signed and notarised, so they load with no
-Gatekeeper step. The Windows builds are unsigned — see
+Gatekeeper step. The Windows builds are unsigned; see
 [docs/UNSIGNED.md](docs/UNSIGNED.md) for what SmartScreen will say and what to do
 about it.
 
@@ -132,22 +133,22 @@ about it.
 
 ### Frame
 
-**Centre X / Centre Y** put the optical axis where the subject is — the move is
+**Centre X / Centre Y** put the optical axis where the subject is; the move is
 about that point. **Overscan** scales the picture to buy back the frame that a
 push in gives away.
 
 ### Output
 
 **Edges** decides what to show where a push in looks past the picture
-(Transparent, Black, Clamp, Mirror, Wrap). **Quality** is supersampling — Fast is
-1 sample per pixel, Good 4, Best 16. It does not change the geometry, only how it
-is sampled.
+(Transparent, Black, Clamp, Mirror, Wrap). **Quality** is supersampling: Fast is
+1 sample per pixel, Good 4, Best 16. It doesn't change the geometry, only how it's
+sampled.
 
 ### Presets
 
 Seven factory shots, from **Vertigo** through **Stairwell** to **Slam**. Picking
 one sets the shot controls; editing any of them afterwards falls back to Custom.
-They deliberately leave **Depth** alone: whether a clip carries a usable depth map
+They leave **Depth** alone on purpose: whether a clip carries a usable depth map
 is a fact about the footage, not a look.
 
 ## Two things worth knowing
@@ -155,7 +156,7 @@ is a fact about the footage, not a look.
 **The pull-back direction has no edge artefacts.** Pulling back magnifies the
 background, which means reading from inside the picture, so nothing ever reaches
 the frame edge. Pushing in shrinks the background, which means reading from
-*beyond* it — that is what Edges and Overscan are for. Both are the shot; only one
+*beyond* it, and that's what Edges and Overscan are for. Both are the shot; only one
 explains itself, which is why the default is a pull back.
 
 **There are two nulls, and both are exact.** Dolly at the middle is no move.
@@ -166,11 +167,11 @@ picture byte for byte (at Quality = Fast; supersampling still resamples).
 
 [**Vertigo — the dolly zoom as a Resolume plugin**](https://www.youtube.com/watch?v=cWMUqKOl4fU) (48s)
 
-Rendered rather than screen-recorded: an FFGL plugin has no window, so the
-footage is real frames through the real plugin class from `vgtest --pipe`,
+Rendered rather than screen-recorded: an FFGL plugin doesn't have a window to
+film, so the footage is actual frames through the plugin class from `vgtest --pipe`,
 driven by a cue sheet that lives beside the code. Two of its beats are
-checkable rather than atmospheric — the anchor ring holding on the test card,
-and the null, where the dolly runs at full travel and the picture does not move.
+checkable rather than atmospheric: the anchor ring holding on the test card,
+and the null, where the dolly runs at full travel and the picture doesn't move.
 
 ## Try it in a browser
 
@@ -185,16 +186,16 @@ python3 -m http.server 8792 --directory demo
 Two of its presets exist to make a claim checkable rather than to look like
 anything: **Null: no depth** drives the dolly as hard as the range goes with
 Relief flat, and **Null: no move** does the opposite. Both give the picture back
-untouched, because a scene with no depth cannot be dolly-zoomed and no camera
+untouched, because a scene with no depth can't be dolly-zoomed and no camera
 move is no camera move.
 
-It is a port and not the plugin — it says so on the page, and nothing on it
+It's a port rather than the plugin. It says so on the page, and nothing on it
 measures anything.
 
 ## Status
 
 Everything below is measured by `tools/verify.sh`, which runs in about 20 seconds
-on the development machine.
+on my development Mac.
 
 | Check | Result |
 |---|---|
@@ -204,24 +205,23 @@ on the development machine.
 | `tools/sweep.py` — no control silently dead | all 12 reach the picture |
 | registration, OpenFX plist, ad-hoc sign, `lipo` | pass |
 
-**What has never been checked:**
+**What has and hasn't been checked in a host:**
 
-- **It has been loaded into Resolume Arena and works** — the author's own
-  report on 2026-08-17, the day it was released, not a session observation. So
-  the FFGL side is no longer only a claim about a harness: it registers, it
-  instantiates, and it renders in the host it was written for.
-- **It has never been loaded into Resolve**, or any other OpenFX host. The OFX
+- **It's been loaded into Resolume Arena and works.** That's my own report from
+  2026-08-17, the day it was released, rather than something observed in a
+  session. So the FFGL side is no longer only a claim about a harness: it
+  registers, it instantiates, and it renders in the host it was written for.
+- **It's never been loaded into Resolve**, or any other OpenFX host. The OFX
   build is still only checked against `ofxprobe`, so real texture sizes and that
-  host's premultiplication behaviour remain unconfirmed — exactly what an
-  offline harness cannot tell you about, because it supplies its own textures.
+  host's premultiplication behaviour are unconfirmed, and those are just what an
+  offline harness can't tell you about, because it supplies its own textures.
 - **The Windows build has been run in Resolume, by an outside user and since by
-  the author.** It
-  compiles — the v0.1.0 release ships a Windows x64 DLL, an OpenFX bundle and an
-  installer, all built in CI — and an external user ran it on Windows and
-  reported issue #2, that choosing a factory preset snapped the dropdown back to
-  Custom. That was a real host-behaviour bug the harness could not see, fixed in
+  me.** It compiles (the v0.1.0 release ships a Windows x64 DLL, an OpenFX bundle
+  and an installer, all built in CI), and an outside user ran it on Windows and
+  reported issue #2, in which choosing a factory preset snapped the dropdown back
+  to Custom. That was a host-behaviour bug the harness couldn't see, fixed in
   `a0fb025`. That user's log shows an NVIDIA GeForce RTX 4070 Laptop GPU on
-  driver 595.79. On 2026-08-27 the author put v0.1.4 through Resolume Arena
+  driver 595.79. On 2026-08-27 I put v0.1.4 through Resolume Arena
   7.27.1 on a Windows machine with no graphics card, on a software renderer: all
   seven presets hold, and touching a control a preset covers drops it back to
   Custom as it should. That checks the preset logic in the host, not how it looks
@@ -229,8 +229,8 @@ on the development machine.
 - **Nothing has been timed.** Best quality is 16 samples per pixel and each one
   runs the depth solve three times in the Luma and Alpha modes; nobody has
   measured what that costs at 4K.
-- Every number here comes from one M4 Max and none of them from CI — hosted
-  runners have no GPU, so `vgtest` cannot run there.
+- Every number here comes from one M4 Max and none of them from CI: hosted
+  runners have no GPU, so `vgtest` can't run there.
 
 ## Building
 
@@ -244,7 +244,7 @@ tools/verify.sh
 Add `-DCMAKE_OSX_ARCHITECTURES=arm64` for a much faster dev build. `cmake
 --install build` drops the bundle straight into Resolume's plugin folder.
 
-`AGENTS.md` is the orientation doc — the model, the invariants and the traps —
+`AGENTS.md` is the orientation doc (the model, the invariants and the traps),
 and `CLAUDE.md` is the short command reference.
 
 ## Licence
