@@ -4,7 +4,8 @@
 > (Anthropic), directed and reviewed by a human author. The dolly-zoom maths is
 > verified numerically by an offline harness that drives the plugin's own class in a
 > headless GL context, and the anchor surface doesn't move at all (0.0000 of travel)
-> while the rest of the frame travels 20% of the frame; the numbers are under
+> while the rest of the frame travels up to a quarter of the way from centre to
+> corner; the numbers are under
 > [Status](#status). It **runs in Resolume Arena**: I loaded it and confirmed it
 > working on 2026-08-17. An outside user has run v0.1.1 in Resolume on Windows 11,
 > reporting issue #2 from it, and I've since run v0.1.4 in Resolume Arena on Windows,

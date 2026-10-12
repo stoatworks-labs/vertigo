@@ -16,13 +16,14 @@ zoom lens and someone to push.
 > 180 parameter combinations, agreeing to within **0.9 of an 8-bit level**; the depth solve against
 > the same solve in double across 45 more (0.8 levels); and the anchor surface is confirmed not to
 > move **at all** (0.0000 of travel) while the rest of the frame travels up to a quarter of the
-> picture. All 12 controls reach the picture.
+> way from centre to corner. All 12 controls reach the picture.
 >
 > **It runs in Resolume Arena**, loaded and confirmed working. It's **never been loaded into
-> Resolve** or any other OpenFX host, the **Windows build has never been run** (it compiles in CI
-> and ships), and **nothing has been timed**: Best quality is 16 samples per pixel and each one
-> runs the depth solve three times in the Luma and Alpha modes, and nobody has measured what that
-> costs at 4K.
+> Resolve** or any other OpenFX host. The **Windows build has been run in Resolume**: an outside
+> user ran v0.1.1 on Windows 11, and I've run v0.1.4 in Arena 7.27.1 on a software renderer, which
+> checks the presets but not how it looks or performs on a GPU. **Nothing has been timed**: Best
+> quality is 16 samples per pixel and each one runs the depth solve three times in the Luma and
+> Alpha modes, and nobody has measured what that costs at 4K.
 >
 > This codebase was created with AI assistance, directed and reviewed by a human author.
 
