@@ -18,6 +18,8 @@ Arena and Avenue, and an [OpenFX](https://openeffects.org) effect for DaVinci
 Resolve, Nuke, Natron and Vegas. No track, no zoom lens and nobody pushing a dolly
 up a corridor.
 
+The [project page](https://stoatworks-labs.com/software/vertigo/) has the downloads, the [user guide](https://stoatworks-labs.com/software/vertigo/guide/) and the video.
+
 ![Vertigo's geometry card put through a pull back: the centre locked, the grid opening out away from it](docs/hero.png)
 
 <sub>The plugin's geometry card put through a pull back, rendered by the plugin's own offline
